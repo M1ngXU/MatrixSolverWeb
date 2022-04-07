@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html style="width: 95%; height: 95%">
+  <head>
+    <meta charset="utf-8">
+    <title>Matrix Solver</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  </head>
+  <style>
+	#solve:hover {
+		transform: Scale(1.25);
+	}
+	#solve {
+		transition: 0.5s;
+		cursor: pointer;
+		background-color: #06F;
+		color: #FFF;
+		border-color: #00F;
+		border-radius: 5px;
+		padding: 5px;
+	}
+	#output #input {
+		font-family: monospace;
+	}
+    td {
+	    padding: 5px;
+    }
+	* {
+	  font-size: 30px;
+	}
+  </style>
+  <body style="width: 100%; height: 100%">
+	  <table style="width: 100%; height: 100%">
+		  <tr>
+			  <td><h2 id="input_help" title="click for help" style="cursor: help;">Input matrix</h2></td>
+			  <td><h2>Output</h2></td>
+		  </tr>
+		  <tr style="height: 100%;">
+			  <td><textarea id="input" style="height: 100%; width: 100%"></textarea></td>
+			  <td rowspan=2><textarea id="output" readonly style="height: 100%; width: 100%"></textarea></td>
+		  </tr>
+		  <tr>
+			  <td style="text-align: center"><button id="solve">Solve</button></td>
+		  </tr>
+	  </table>
+    <script type="module">
+      import init, {solve} from "./pkg/matrix_solver_wasm.js";
+		$('#input_help').click(() => alert(
+`The input matrix to be solved.
+The following format is expected:
+(l;l|r;r)
+(l;l|r;r)
+Each 'l' or 'r' can be either an integer
+or a fraction (like 2/3).
+
+Each row needs the same amount of 'l'
+and for n 'l' on the left side, you need n rows.
+`
+		));
+      init().then(() => {
+		  let solve_matrix = () => $('#output').val(solve($('#input').val().replace(/ /g, '')));
+		  $('#input').keydown(e => {
+		  	if (e.ctrlKey && e.keyCode == 13) solve_matrix();
+		  });
+		  $('#solve').click(solve_matrix);
+	});
+    </script>
+  </body>
+</html>
